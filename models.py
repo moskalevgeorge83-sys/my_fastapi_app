@@ -25,11 +25,11 @@ class RecipeDetail(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     recipe_id = Column(
-    Integer,
-    ForeignKey("recipes.id"),
-    nullable=False,
-    unique=True,
-)
+        Integer,
+        ForeignKey("recipes.id"),
+        nullable=False,
+        unique=True,
+    )
     name = Column(String, nullable=False)  # Дублируется для удобства
     cook_time = Column(Integer, nullable=False)
     ingredients = Column(Text, nullable=False)
