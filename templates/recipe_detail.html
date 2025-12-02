@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ recipe.name }}</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+<h1>{{ recipe.name }}</h1>
+<p>Views: {{ recipe.views }}</p>
+<p>Cook Time: {{ recipe.cook_time }} minutes</p>
+
+{% if recipe.details %}
+    <h2>Ingredients</h2>
+    <p>{{ recipe.details.ingredients }}</p>
+    <h2>Description</h2>
+    <p>{{ recipe.details.description }}</p>
+{% endif %}
+
+<a href="/recipes">Back to list</a>
+</body>
+</html>
