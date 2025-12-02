@@ -1,5 +1,6 @@
-from pydantic import BaseModel, Field, ConfigDict
 from typing import Optional
+
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class RecipeBase(BaseModel):
@@ -11,7 +12,9 @@ class RecipeBase(BaseModel):
 class RecipeCreate(RecipeBase):
     views: Optional[int] = 0
     ingredients: str = Field(..., json_schema_extra={"example": "Flour, Eggs, Milk"})
-    description: Optional[str] = Field(None, json_schema_extra={"example": "Mix ingredients and fry."})
+    description: Optional[str] = Field(
+        None, json_schema_extra={"example": "Mix ingredients and fry."}
+    )
 
 
 class RecipeDetailOut(BaseModel):
@@ -21,6 +24,7 @@ class RecipeDetailOut(BaseModel):
     description: Optional[str]
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class RecipeOut(RecipeBase):
     id: int
