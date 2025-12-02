@@ -66,7 +66,7 @@ async def recipe_detail(request: Request, recipe_id: int, session: AsyncSession 
     if not recipe:
         raise HTTPException(status_code=404, detail="Рецепт не найден")
 
-    recipe.views = (recipe.views or 0) + 1
+    recipe.views = (recipe.views or 0) + 1  # type: ignore[assignment]
     if recipe.details and hasattr(recipe.details, "views"):
         recipe.details.views = (recipe.details.views or 0) + 1
 
