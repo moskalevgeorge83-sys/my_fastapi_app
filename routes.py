@@ -64,7 +64,7 @@ async def recipes_list(
 async def recipe_detail(
     request: Request,
     recipe_id: int,
-    session: AsyncSession = get_session_dependency,  
+    session: AsyncSession = get_session_dependency,
 ) -> Any:
     """
     Возвращает HTML страницу с подробной информацией о рецепте, включая детали.
