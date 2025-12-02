@@ -50,9 +50,8 @@ async def recipes_list(
     Возвращает HTML страницу с таблицей рецептов,
     отсортированных по убыванию просмотров и возрастанию времени приготовления.
     """
-    query = (
-        select(models.Recipe)
-        .order_by(models.Recipe.views.desc(), models.Recipe.cook_time.asc())
+    query = select(models.Recipe).order_by(
+        models.Recipe.views.desc(), models.Recipe.cook_time.asc()
     )
     result = await session.execute(query)
     recipes = result.scalars().all()
