@@ -1,15 +1,17 @@
-from typing import AsyncGenerator, Any
 from contextlib import asynccontextmanager
-from database import engine, async_session, Base
-from sqlalchemy import select
-from sqlalchemy.exc import IntegrityError
-from fastapi import status, HTTPException
-from fastapi import FastAPI, Request, Depends
+from typing import Any, AsyncGenerator
+
+from fastapi import Depends, FastAPI, HTTPException, Request, status
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
-import models, schemas
+
+import models
+import schemas
+from database import Base, async_session, engine
 
 
 @asynccontextmanager
@@ -37,19 +39,27 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 @app.get("/recipes", response_class=HTMLResponse)
-async def recipes_list(request: Request, session: AsyncSession = Depends(get_session)) -> Any:
+async def recipes_list(
+    request: Request, session: AsyncSession = Depends(get_session)
+) -> Any:
     """
     Возвращает HTML страницу с таблицей рецептов,
     отсортированных по убыванию просмотров и возрастанию времени приготовления.
     """
-    query = select(models.Recipe).order_by(models.Recipe.views.desc(), models.Recipe.cook_time.asc())
+    query = select(models.Recipe).order_by(
+        models.Recipe.views.desc(), models.Recipe.cook_time.asc()
+    )
     result = await session.execute(query)
     recipes = result.scalars().all()
-    return templates.TemplateResponse("recipes_list.html", {"request": request, "recipes": recipes})
+    return templates.TemplateResponse(
+        "recipes_list.html", {"request": request, "recipes": recipes}
+    )
 
 
 @app.get("/recipes/{recipe_id}", response_class=HTMLResponse)
-async def recipe_detail(request: Request, recipe_id: int, session: AsyncSession = Depends(get_session)) -> Any:
+async def recipe_detail(
+    request: Request, recipe_id: int, session: AsyncSession = Depends(get_session)
+) -> Any:
     """
     Возвращает HTML страницу с подробной информацией о рецепте, включая детали.
     При каждом вызове увеличивает счётчик просмотров в таблицах рецепта и деталей.
@@ -66,18 +76,24 @@ async def recipe_detail(request: Request, recipe_id: int, session: AsyncSession 
     if not recipe:
         raise HTTPException(status_code=404, detail="Рецепт не найден")
 
-    recipe.views = (recipe.views or 0) + 1  # type: ignore[assignment]
+    recipe.views = (recipe.views or 0) + 1
     if recipe.details and hasattr(recipe.details, "views"):
         recipe.details.views = (recipe.details.views or 0) + 1
 
     await session.commit()
     await session.refresh(recipe)
 
-    return templates.TemplateResponse("recipe_detail.html", {"request": request, "recipe": recipe})
+    return templates.TemplateResponse(
+        "recipe_detail.html", {"request": request, "recipe": recipe}
+    )
 
 
-@app.post("/recipes", response_model=schemas.RecipeOut, status_code=status.HTTP_201_CREATED)
-async def create_recipe(recipe_in: schemas.RecipeCreate, session: AsyncSession = Depends(get_session)) -> schemas.RecipeOut:
+@app.post(
+    "/recipes", response_model=schemas.RecipeOut, status_code=status.HTTP_201_CREATED
+)
+async def create_recipe(
+    recipe_in: schemas.RecipeCreate, session: AsyncSession = Depends(get_session)
+) -> schemas.RecipeOut:
     """
     Создаёт новый рецепт и связанные детали в базе данных.
 
@@ -119,6 +135,6 @@ async def create_recipe(recipe_in: schemas.RecipeCreate, session: AsyncSession =
         await session.rollback()
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail="Рецепт с таким именем уже существует."
+            detail="Рецепт с таким именем уже существует.",
         )
 
