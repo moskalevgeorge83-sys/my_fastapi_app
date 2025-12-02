@@ -1,15 +1,15 @@
 # Запуск из терминала
-
 from httpx import ASGITransport, AsyncClient
-from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker
 from routes import app, get_session, Base
 import pytest
 
 # Создаем тестовую базу данных
 TEST_DATABASE_URL = "sqlite+aiosqlite:///./test.db"
 test_engine = create_async_engine(TEST_DATABASE_URL)
-TestingSessionLocal = sessionmaker(test_engine, class_=AsyncSession, expire_on_commit=False)
+TestingSessionLocal = async_sessionmaker(
+    test_engine, class_=AsyncSession, expire_on_commit=False
+)
 
 @pytest.fixture(scope="function")
 async def client():
