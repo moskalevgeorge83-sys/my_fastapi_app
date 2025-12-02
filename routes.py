@@ -100,7 +100,8 @@ async def recipe_detail(
     status_code=status.HTTP_201_CREATED,
 )
 async def create_recipe(
-    recipe_in: schemas.RecipeCreate, session: AsyncSession = get_session_dependency
+    recipe_in: schemas.RecipeCreate,
+    session: AsyncSession = get_session_dependency,
 ) -> schemas.RecipeOut:
     """
     Создаёт новый рецепт и связанные детали в базе данных.
