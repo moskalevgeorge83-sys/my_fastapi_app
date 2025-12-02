@@ -137,4 +137,3 @@ async def create_recipe(
             status_code=status.HTTP_409_CONFLICT,
             detail="Рецепт с таким именем уже существует.",
         )
-
