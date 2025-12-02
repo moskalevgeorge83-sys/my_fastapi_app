@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Text
+from sqlalchemy import Column, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
+
 from database import Base
 
 
@@ -11,8 +12,12 @@ class Recipe(Base):
     views = Column(Integer, default=0)
     cook_time = Column(Integer, nullable=False)
 
-    details = relationship("RecipeDetail", back_populates="recipe",
-                           uselist=False, cascade="all, delete-orphan")
+    details = relationship(
+        "RecipeDetail",
+        back_populates="recipe",
+        uselist=False,
+        cascade="all, delete-orphan",
+    )
 
 
 class RecipeDetail(Base):
