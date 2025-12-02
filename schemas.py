@@ -11,7 +11,10 @@ class RecipeBase(BaseModel):
 
 class RecipeCreate(RecipeBase):
     views: Optional[int] = 0
-    ingredients: str = Field(..., json_schema_extra={"example": "Flour, Eggs, Milk"})
+    ingredients: str = Field(
+    ...,
+    json_schema_extra={"example": "Flour, Eggs, Milk"},
+)
     description: Optional[str] = Field(
         None, json_schema_extra={"example": "Mix ingredients and fry."}
     )
