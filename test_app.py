@@ -40,7 +40,8 @@ async def client():
 async def test_recipes_list(client: AsyncClient):
     """
     Интеграционный тест для эндпоинта GET /recipes.
-    Проверяет, что запрос успешно возвращает статус 200 и содержит заголовок 'Recipes List' в HTML-ответе.
+    Проверяет, что запрос успешно возвращает статус 200
+    и содержит заголовок 'Recipes List' в HTML-ответе.
     """
     response = await client.get("/recipes")
     assert response.status_code == 200
@@ -75,7 +76,8 @@ async def test_recipe_detail(client: AsyncClient):
 async def test_create_recipe(client: AsyncClient):
     """
     Интеграционный тест для эндпоинта POST /recipes.
-    Проверяет успешное создание нового рецепта и наличие имени рецепта в JSON-ответе.
+    Проверяет успешное создание нового рецепта
+    и наличие имени рецепта в JSON-ответе.
     """
     recipe_data = {
         "name": "New Recipe",
