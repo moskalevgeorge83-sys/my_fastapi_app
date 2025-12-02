@@ -1,9 +1,9 @@
-from typing import  AsyncGenerator
+from typing import AsyncGenerator, Any
 from contextlib import asynccontextmanager
 from database import engine, async_session, Base
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-from fastapi import  status, HTTPException
+from fastapi import status, HTTPException
 from fastapi import FastAPI, Request, Depends
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -37,7 +37,7 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 @app.get("/recipes", response_class=HTMLResponse)
-async def recipes_list(request: Request, session: AsyncSession = Depends(get_session)) -> HTMLResponse:
+async def recipes_list(request: Request, session: AsyncSession = Depends(get_session)) -> Any:
     """
     Возвращает HTML страницу с таблицей рецептов,
     отсортированных по убыванию просмотров и возрастанию времени приготовления.
@@ -49,7 +49,7 @@ async def recipes_list(request: Request, session: AsyncSession = Depends(get_ses
 
 
 @app.get("/recipes/{recipe_id}", response_class=HTMLResponse)
-async def recipe_detail(request: Request, recipe_id: int, session: AsyncSession = Depends(get_session)) -> HTMLResponse:
+async def recipe_detail(request: Request, recipe_id: int, session: AsyncSession = Depends(get_session)) -> Any:
     """
     Возвращает HTML страницу с подробной информацией о рецепте, включая детали.
     При каждом вызове увеличивает счётчик просмотров в таблицах рецепта и деталей.
@@ -121,5 +121,4 @@ async def create_recipe(recipe_in: schemas.RecipeCreate, session: AsyncSession =
             status_code=status.HTTP_409_CONFLICT,
             detail="Рецепт с таким именем уже существует."
         )
-
 
