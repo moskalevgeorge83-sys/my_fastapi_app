@@ -13,6 +13,8 @@ import models
 import schemas
 from database import Base, async_session, engine
 
+get_session_dependency = Depends(get_session)
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -40,14 +42,15 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
 
 @app.get("/recipes", response_class=HTMLResponse)
 async def recipes_list(
-    request: Request, session: AsyncSession = Depends(get_session)
+    request: Request, session: AsyncSession = get_session_dependency
 ) -> Any:
     """
     Возвращает HTML страницу с таблицей рецептов,
     отсортированных по убыванию просмотров и возрастанию времени приготовления.
     """
-    query = select(models.Recipe).order_by(
-        models.Recipe.views.desc(), models.Recipe.cook_time.asc()
+    query = (
+        select(models.Recipe)
+        .order_by(models.Recipe.views.desc(), models.Recipe.cook_time.asc())
     )
     result = await session.execute(query)
     recipes = result.scalars().all()
@@ -58,7 +61,7 @@ async def recipes_list(
 
 @app.get("/recipes/{recipe_id}", response_class=HTMLResponse)
 async def recipe_detail(
-    request: Request, recipe_id: int, session: AsyncSession = Depends(get_session)
+    request: Request, recipe_id: int, session: AsyncSession = get_session_dependency
 ) -> Any:
     """
     Возвращает HTML страницу с подробной информацией о рецепте, включая детали.
@@ -89,10 +92,12 @@ async def recipe_detail(
 
 
 @app.post(
-    "/recipes", response_model=schemas.RecipeOut, status_code=status.HTTP_201_CREATED
+    "/recipes",
+    response_model=schemas.RecipeOut,
+    status_code=status.HTTP_201_CREATED,
 )
 async def create_recipe(
-    recipe_in: schemas.RecipeCreate, session: AsyncSession = Depends(get_session)
+    recipe_in: schemas.RecipeCreate, session: AsyncSession = get_session_dependency
 ) -> schemas.RecipeOut:
     """
     Создаёт новый рецепт и связанные детали в базе данных.
