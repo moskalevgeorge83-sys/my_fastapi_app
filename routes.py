@@ -13,8 +13,6 @@ import models
 import schemas
 from database import Base, async_session, engine
 
-get_session_dependency = Depends(get_session)
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -38,6 +36,10 @@ async def get_session() -> AsyncGenerator[AsyncSession, None]:
     """
     async with async_session() as session:
         yield session
+
+
+# ✅ Переместили СЮДА после определения get_session
+get_session_dependency = Depends(get_session)
 
 
 @app.get("/recipes", response_class=HTMLResponse)
