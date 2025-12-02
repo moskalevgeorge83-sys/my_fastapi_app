@@ -18,7 +18,7 @@ from database import Base, async_session, engine
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """
     Менеджер жизненного цикла приложения FastAPI.
-    Создаёт таблицы базы данных при старте и закрывает подключение к базе при остановке.
+    Создаёт таблицы базы данных при старте и отключает при остановке базу.
     """
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
@@ -62,11 +62,13 @@ async def recipes_list(
 
 @app.get("/recipes/{recipe_id}", response_class=HTMLResponse)
 async def recipe_detail(
-    request: Request, recipe_id: int, session: AsyncSession = get_session_dependency
+    request: Request,
+    recipe_id: int,
+    session: AsyncSession = get_session_dependency,  
 ) -> Any:
     """
     Возвращает HTML страницу с подробной информацией о рецепте, включая детали.
-    При каждом вызове увеличивает счётчик просмотров в таблицах рецепта и деталей.
+    При вызове увеличивает счётчик просмотров в таблицах рецепта и деталей.
 
     Возвращает 404, если рецепт не найден.
     """
